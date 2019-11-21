@@ -6,7 +6,7 @@ ScreenGame::ScreenGame(Application* _app)
 	:Screen(_app, "Game"), level(nullptr)
 {
 	cout << "Init game screen" << endl;
-	
+
 	for (int i = 0; i < 4; i++) {
 		players[i] = nullptr;
 	}
@@ -26,13 +26,13 @@ void ScreenGame::initGame()
 	}
 
 	level = new Level(levelString, 192, 64, 640, 640);
-	
+
 	for (int i = 0; i < 4; i++) {
 		delete players[i];
 		players[i] = nullptr;
 
 		if (app->controllerPool.getController(i) != -1) {
-			players[i] = new Player(level->playerSpawns[i].x, level->playerSpawns[i].y, 128, 128, 1, REGRESS, i);
+			players[i] = new Player(level->playerSpawns[i].x, level->playerSpawns[i].y, 1, REGRESS, i);
 		}
 	}
 }
@@ -55,19 +55,19 @@ void ScreenGame::update()
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 
 			if (keyState[SDL_SCANCODE_W]) {
-				players[i]->speed.y = -1;
+				players[i]->setSpeedY(-1.0f);
 			}
 
 			if (keyState[SDL_SCANCODE_S]) {
-				players[i]->speed.y = 1;
+				players[i]->setSpeedY(1.0f);
 			}
 
 			if (keyState[SDL_SCANCODE_A]) {
-				players[i]->speed.x = -1;
+				players[i]->setSpeedX(-1.0f);
 			}
 
 			if (keyState[SDL_SCANCODE_D]) {
-				players[i]->speed.x = 1;
+				players[i]->setSpeedX(1.0f);
 			}
 
 			if (keyState[SDL_SCANCODE_UP]) {
@@ -88,22 +88,22 @@ void ScreenGame::update()
 		}
 		else {
 			SDL_GameController *gc = app->controllerPool.controllers[controllerId];
-			
+
 
 			if (SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_DPAD_UP) == 1) {
-				players[i]->speed.y = -1;
+				players[i]->setSpeedY(-1.0f);
 			}
 
 			if (SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_DPAD_DOWN) == 1) {
-				players[i]->speed.y = 1;
+				players[i]->setSpeedY(1.0f);
 			}
 
 			if (SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_DPAD_LEFT) == 1) {
-				players[i]->speed.x = -1;
+				players[i]->setSpeedX(-1.0f);
 			}
 
 			if (SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == 1) {
-				players[i]->speed.x = 1;
+				players[i]->setSpeedX(1.0f);
 			}
 
 			if (SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_Y) == 1) {

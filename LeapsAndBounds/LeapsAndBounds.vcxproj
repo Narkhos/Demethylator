@@ -185,6 +185,7 @@
     <ClCompile Include="gameEngine\fontPool.cpp" />
     <ClCompile Include="gameEngine\gui.cpp" />
     <ClCompile Include="gameEngine\sfxr.cpp" />
+    <ClCompile Include="game\game.cpp" />
     <ClCompile Include="game\leapsAndBoundsApp.cpp" />
     <ClCompile Include="game\screenGame.cpp" />
     <ClCompile Include="game\screenPlayerSelect.cpp" />
