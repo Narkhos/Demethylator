@@ -16,11 +16,14 @@ public:
 	SDL_Color textColor;
 	GUI_TexteDynamique *txtGame;
 
+	GLuint background;
+
 	ScreenGame(Application* _app);
 	~ScreenGame();
 
 	void initGame();
 
+	int checkVictory();
 	void update();
 
 	void draw();

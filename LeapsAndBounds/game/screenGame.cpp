@@ -11,7 +11,7 @@ ScreenGame::ScreenGame(Application* _app)
 		players[i] = nullptr;
 	}
 
-	// background = app->texturePool->getTexture("background.png")->texId;
+	background = app->texturePool->getTexture("background.png")->texId;
 
 	textColor = { 255 , 255 , 255, 255 };
 	txtGame = new GUI_TexteDynamique(L"Running", _app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
@@ -32,13 +32,39 @@ void ScreenGame::initGame()
 		players[i] = nullptr;
 
 		if (app->controllerPool.getController(i) != -1) {
-			players[i] = new Player(level->playerSpawns[i].x, level->playerSpawns[i].y, 1, REGRESS, i);
+			players[i] = new Player(level->playerSpawns[i].x, level->playerSpawns[i].y, 3, REGRESS, i);
 		}
 	}
 }
 
+int ScreenGame::checkVictory()
+{
+	int winner = -1;
+	for (int i = 0; i < 4; i++) {
+		if (players[i] != nullptr) {
+			
+			if (!players[i]->isDead()) {
+				if (winner != -1) {
+					winner = -1;
+					break;
+				}
+				else {
+					winner = i;
+				}
+			}
+		}
+	}
+
+	return winner;
+}
+
 void ScreenGame::update()
 {
+	if (this->checkVictory() >= 0) {
+		app->setScreen("Stats");
+		return;
+	}
+
 	for (int i = 0; i < 4; i++) {
 		if (players[i] != nullptr) players[i]->update(app->deltaTime, level->position, level->w, level->h);
 	}
@@ -170,8 +196,8 @@ void ScreenGame::draw()
 
 	// DISPLAY
 
-	// drawImage(background, 0, 0, 1024, 768, 1.0f);
-	level->draw(players);
+	drawImage(background, 0, 0, 1024, 768, 1.0f);
+	level->draw(players, app->currentTime);
 }
 
 void ScreenGame::onSet(string id_orig)

@@ -8,6 +8,7 @@
 #include <map>
 #include <glm/glm.hpp>
 #include "gui.hpp"
+#include "basicAnimation2d.hpp"
 
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32.lib")
@@ -26,16 +27,17 @@ class Bullet;
 class Hitbox {
 public:
 	glm::vec2 position;
-	float radius;
+	float width;
+	float height;
 	GLuint texId;
 	string group;
 
 	Hitbox();
 
-	Hitbox(glm::vec2 _position, float _radius, string _group);
+	Hitbox(glm::vec2 _position, float _width, float _height, string _group);
 	~Hitbox();
 
-	void update(glm::vec2 newPosition, float newRadius);
+	void update(glm::vec2 newPosition, float newWidth, float newHeight);
 
 	bool collision(Hitbox& hitbox);
 
@@ -86,10 +88,10 @@ enum BulletType { REGRESS = 0, EVOLVE = 1 };
 
 struct PlayerState {
 	glm::vec2 offset;
-	float w;
-	float h;
+	float zoom;
 	glm::vec2 hitboxOffset;
-	float hitboxRadius;
+	float hitboxWidth;
+	float hitboxHeight;
 	float maxSpeed;
 	glm::vec2 gunOffset;
 	float bulletRadius;
@@ -97,13 +99,11 @@ struct PlayerState {
 	int gunCooldown;
 };
 
-extern PlayerState playerState[5];
-extern GLfloat texCoord[64];
+extern PlayerState playerState[7];
 
 class Player {
 public:
 	int state;
-	GLuint texId[5];
 	Hitbox hitbox;
 	Hitbox precHitbox;
 	glm::vec2 position;
@@ -112,6 +112,12 @@ public:
 	glm::vec2 speed;
 	BulletType weaponType;
 	int playerId;
+
+	BasicAnimation2d* walk;
+	BasicAnimation2d* idle;
+	BasicAnimation2d* dead;
+	bool left;
+	float zoom;
 
 	Player(float x, float y, int _state, BulletType _weaponType, int _playerId);
 
@@ -141,9 +147,11 @@ public:
 
 	Bullet fire(glm::vec2 direction);
 
-	void draw();
+	void draw(int time);
 
 	void toggleWeapon();
+
+	bool isDead();
 };
 
 class Bullet {
@@ -205,7 +213,7 @@ public:
 
 	void initTile(char c, int column, int line);
 
-	void draw(Player* players[4]);
+	void draw(Player* players[4], int time);
 
 	glm::vec2 getPlayerSpawnScreenPosition(int playerIndex);
 

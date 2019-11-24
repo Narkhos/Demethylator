@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="gameEngine\application.hpp" />
+    <ClInclude Include="gameEngine\basicAnimation2d.hpp" />
     <ClInclude Include="gameEngine\config.hpp" />
     <ClInclude Include="gameEngine\controllerPool.hpp" />
     <ClInclude Include="gameEngine\fontPool.hpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine\application.cpp" />
+    <ClCompile Include="gameEngine\basicAnimation2d.cpp" />
     <ClCompile Include="gameEngine\config.cpp" />
     <ClCompile Include="gameEngine\controllerPool.cpp" />
     <ClCompile Include="gameEngine\fontPool.cpp" />

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-bool showFPS = true;
+bool showFPS = false;
 TexturePool texturePool("./data/images/");
 
 // GAME
@@ -20,13 +20,13 @@ TexturePool texturePool("./data/images/");
 // class Hitbox
 
 Hitbox::Hitbox()
-	:position(glm::vec2(0.0, 0.0)), radius(1.0), group("")
+	:position(glm::vec2(0.0, 0.0)), width(1.0), height(1.0), group("")
 {
 	this->texId = texturePool.getTexture("hitbox.png")->texId;
 }
 
-Hitbox::Hitbox(glm::vec2 _position, float _radius, string _group)
-	: position(_position), radius(_radius), group(_group)
+Hitbox::Hitbox(glm::vec2 _position, float _width, float _height, string _group)
+	: position(_position), width(_width), height(_height), group(_group)
 {
 	this->texId = texturePool.getTexture("hitbox.png")->texId;
 }
@@ -36,20 +36,24 @@ Hitbox::~Hitbox()
 
 }
 
-void Hitbox::update(glm::vec2 newPosition, float newRadius)
+void Hitbox::update(glm::vec2 newPosition, float newWidth, float newHeight)
 {
 	this->position = newPosition;
-	this->radius = newRadius;
+	this->width = newWidth;
+	this->height = newHeight;
 }
 
 bool Hitbox::collision(Hitbox& hitbox)
 {
-	return glm::distance(hitbox.position, this->position) < hitbox.radius + this->radius;
+	return (this->position.x < hitbox.position.x + hitbox.width &&
+		this->position.x + this->width > hitbox.position.x &&
+		this->position.y < hitbox.position.y + hitbox.height &&
+		this->height + this->position.y > hitbox.position.y);
 }
 
 void Hitbox::draw()
 {
-	if (showFPS) drawImage(this->texId, this->position.x - radius, this->position.y - radius, this->radius * 2.0, this->radius * 2.0, 1.0f);
+	if (showFPS) drawImage(this->texId, this->position.x, this->position.y, this->width, this->height, 1.0f);
 }
 
 
@@ -100,14 +104,14 @@ Mushroom::Mushroom(float x, float y, float _w, float _h, bool _bonus)
 	:position(x, y), w(_w), h(_h), bonus(_bonus ? 1 : -1)
 {
 	this->texId = texturePool.getTexture(_bonus ? "redmushroom.png" : "greenmushroom.png")->texId;
-	this->hitbox = Hitbox(position + glm::vec2(w / 2.0, 2.0 * w / 3.0), w / 4.0, "bonus");
+	this->hitbox = Hitbox(position + glm::vec2(0, h / 2), w, h / 2, "bonus");
 }
 
 Mushroom::Mushroom(glm::vec2 _position, float _w, float _h, bool _bonus)
 	:position(_position), w(_w), h(_h), bonus(_bonus ? 1 : -1)
 {
 	this->texId = texturePool.getTexture(_bonus ? "redmushroom.png" : "greenmushroom.png")->texId;
-	this->hitbox = Hitbox(position + glm::vec2(w / 2.0, 2.0 * w / 3.0), w / 4.0, "bonus");
+	this->hitbox = Hitbox(position + glm::vec2(0, h / 2), w, h / 2, "bonus");
 }
 
 Mushroom::~Mushroom() {}
@@ -118,122 +122,111 @@ void Mushroom::draw()
 	hitbox.draw();
 }
 
-PlayerState playerState[5] = {
+PlayerState playerState[7] = {
+	// Dead
 	{
-		glm::vec2(-3, -7),	// offset
-		32.0f,				// w
-		32.0f,				// h
-		glm::vec2(15, 11),	// hitboxOffset
-		8.0f,				// hitboxRadius
+		glm::vec2(0, 0),	// offset
+		1.0f,				// zoom
+		glm::vec2(6, 4),	// hitboxOffset
+		16.0f,				// hitboxWidth
+		30.0f,				// hitboxHeight
 		1.00f,				// maxSpeed
-		glm::vec2(15, 11),	// gunOffset
+		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
 	{
-		glm::vec2(-64, -64),	// offset
-		128.0f,				// w
-		128.0f,				// h
-		glm::vec2(15, 11),	// hitboxOffset
-		16.0f,				// hitboxRadius
+		glm::vec2(0, 0),	// offset
+		1.0f,				// zoom
+		glm::vec2(6, 4),	// hitboxOffset
+		16.0f,				// hitboxWidth
+		30.0f,				// hitboxHeight
 		1.00f,				// maxSpeed
-		glm::vec2(15, 11),	// gunOffset
+		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
 	{
-		glm::vec2(-64, -64),	// offset
-		128.0f,				// w
-		128.0f,				// h
-		glm::vec2(15, 11),	// hitboxOffset
-		16.0f,				// hitboxRadius
+		glm::vec2(-15, -15),// offset
+		2.0f,				// zoom
+		glm::vec2(0, -11),	// hitboxOffset
+		32.0f,				// hitboxWidth
+		64.0f,				// hitboxHeight
 		1.00f,				// maxSpeed
-		glm::vec2(15, 11),	// gunOffset
+		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
 	{
-		glm::vec2(-64, -64),	// offset
-		128.0f,				// w
-		128.0f,				// h
-		glm::vec2(15, 11),	// hitboxOffset
-		16.0f,				// hitboxRadius
+		glm::vec2(-31, -31),	// offset
+		3.0f,				// zoom
+		glm::vec2(-8, -31),	// hitboxOffset
+		48.0f,				// hitboxWidth
+		96.0f,				// hitboxHeight
 		1.00f,				// maxSpeed
-		glm::vec2(15, 11),	// gunOffset
+		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
 	{
-		glm::vec2(-64, -64),	// offset
-		128.0f,				// w
-		128.0f,				// h
-		glm::vec2(15, 11),	// hitboxOffset
-		16.0f,				// hitboxRadius
+		glm::vec2(-47, -47),	// offset
+		4.0f,				// zoom
+		glm::vec2(-15, -47),	// hitboxOffset
+		64.0f,				// hitboxWidth
+		128.0f,				// hitboxHeight
 		1.00f,				// maxSpeed
-		glm::vec2(15, 11),	// gunOffset
+		glm::vec2(15, 15),	// gunOffset
+		8.0f,				// bulletRadius
+		1.0f,				// bulletSpeed
+		500					// gunCooldown
+	},
+	{
+		glm::vec2(-63, -63),	// offset
+		5.0f,				// zoom
+		glm::vec2(-25, -63),	// hitboxOffset
+		80.0f,				// hitboxWidth
+		160.0f,				// hitboxHeight
+		1.00f,				// maxSpeed
+		glm::vec2(15, 15),	// gunOffset
+		8.0f,				// bulletRadius
+		1.0f,				// bulletSpeed
+		500					// gunCooldown
+	},
+	// Dead
+	{
+		glm::vec2(0, 0),	// offset
+		1.0f,				// zoom
+		glm::vec2(6, 4),	// hitboxOffset
+		16.0f,				// hitboxWidth
+		30.0f,				// hitboxHeight
+		1.00f,				// maxSpeed
+		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	}
-};
-
-GLfloat texCoord[64] =
-{
-	0, 0,
-	0.25, 0,
-	0.25, 1,
-	0, 1,
-
-	0.25, 0,
-	0.5, 0,
-	0.5, 1,
-	0.25, 1,
-
-	0.5, 0,
-	0.75, 0,
-	0.75, 1,
-	0.5, 1,
-
-	0.75, 0,
-	1.0, 0,
-	1.0, 1,
-	0.75, 1,
-
-	0.25, 0,
-	0.0, 0,
-	0.0, 1,
-	0.25, 1,
-
-	0.5, 0,
-	0.25, 0,
-	0.25, 1,
-	0.5, 1,
-
-	0.75, 0,
-	0.5, 0,
-	0.5, 1,
-	0.75, 1,
-
-	1.0, 0,
-	0.75, 0,
-	0.75, 1,
-	1.0, 1
 };
 
 // class Player
 Player::Player(float x, float y, int _state, BulletType _weaponType, int _playerId)
-	:position(glm::vec2(x, y)), precPosition(glm::vec2(x, y)), state(_state), speed(glm::vec2(0.0, 0.0)), weaponType(_weaponType),
-	gunCooldown(0), playerId(_playerId)
+	:position(glm::vec2(x, y)), precPosition(glm::vec2(x, y)), speed(glm::vec2(0.0, 0.0)), weaponType(_weaponType),
+	gunCooldown(0), playerId(_playerId), left(false)
 {
-	for (int i = 0; i < 5; i++) {
-		stringstream ss;
-		ss << playerId << "/player" << i + 1 << ".png";
-		this->texId[i] = texturePool.getTexture(ss.str())->texId;
-	}
+	stringstream ssWalk;
+	ssWalk << playerId << "/walk.png";
+	walk = new BasicAnimation2d(ssWalk.str(), 100, texturePool);
+
+	stringstream ssIdle;
+	ssIdle << playerId << "/idle.png";
+	idle = new BasicAnimation2d(ssIdle.str(), 2000, texturePool);
+
+	stringstream ssDead;
+	ssDead << playerId << "/dead.png";
+	dead = new BasicAnimation2d(ssDead.str(), 2000, texturePool);
 
 	this->setState(_state);
 }
@@ -248,7 +241,7 @@ void Player::setState(int _state)
 	this->state = _state;
 
 	hitboxGroup << "player" << playerId;
-	this->hitbox = Hitbox(position + playerState[state].hitboxOffset, playerState[state].hitboxRadius, hitboxGroup.str());
+	this->hitbox = Hitbox(position + playerState[state].hitboxOffset, playerState[state].hitboxWidth, playerState[state].hitboxHeight, hitboxGroup.str());
 	this->precHitbox = this->hitbox;
 }
 
@@ -264,12 +257,16 @@ void Player::setSpeedY(float value)
 
 void Player::evolve()
 {
-	this->setState(min(this->state + 1, 4));
+	if (!this->isDead()) {
+		this->setState(min(this->state + 1, 6));
+	}
 }
 
 void Player::degenerate()
 {
-	this->setState(max(this->state - 1, 0));
+	if (!this->isDead()) {
+		this->setState(max(this->state - 1, 0));
+	}
 }
 
 void Player::evolveOrRegress(BulletType type) {
@@ -288,15 +285,26 @@ Hitbox Player::getHitbox()
 
 void Player::update(int deltaTime, const glm::vec2 levelPos, const float levelWidth, const float levelHeight)
 {
+	if (this->isDead()) return;
+
 	// Update precedent position
 	precPosition = position;
 	precHitbox = hitbox;
 
+	if (speed.x < 0) {
+		this->left = true;
+	}
+	else {
+		if (speed.x > 0) {
+			this->left = false;
+		}
+	}
+	
 	// Update position
 	position += 0.15f * speed * (float)deltaTime;
 
 	// Update hitbox position and size
-	hitbox.update(position + playerState[state].hitboxOffset, playerState[state].hitboxRadius);
+	hitbox.update(position + playerState[state].hitboxOffset, playerState[state].hitboxWidth, playerState[state].hitboxHeight);
 
 	hitLevelBorder(levelPos, levelWidth, levelHeight);
 
@@ -311,20 +319,21 @@ void Player::update(int deltaTime, const glm::vec2 levelPos, const float levelWi
 
 bool Player::takeMushroom(Mushroom& mushroom)
 {
+	if (this->isDead()) return false;
 	bool collision = hitbox.collision(mushroom.hitbox);
 
-	if (collision) {
-		switch (mushroom.bonus) {
-		case 1:
-			this->evolve();
-			break;
-		case -1:
-			this->degenerate();
-			break;
-		}
+if (collision) {
+	switch (mushroom.bonus) {
+	case 1:
+		this->evolve();
+		break;
+	case -1:
+		this->degenerate();
+		break;
 	}
+}
 
-	return collision;
+return collision;
 }
 
 bool Player::hitWall(const Wall& wall)
@@ -335,10 +344,10 @@ bool Player::hitWall(const Wall& wall)
 	glm::vec2 newPos(hb.position.x, precHitbox.position.y);
 
 	glm::vec2 wallPos = wall.position;
-	if (newPos.x + hb.radius > wallPos.x
-		&& newPos.y + hb.radius > wallPos.y
-		&& newPos.x - hb.radius < wallPos.x + wall.w
-		&& newPos.y - hb.radius < wallPos.y + wall.h) {
+	if (newPos.x + hb.width > wallPos.x
+		&& newPos.y + hb.height > wallPos.y
+		&& newPos.x < wallPos.x + wall.w
+		&& newPos.y < wallPos.y + wall.h) {
 
 		this->position = glm::vec2(precPosition.x, this->position.y);
 		this->hitbox.position = glm::vec2(precHitbox.position.x, this->hitbox.position.y);
@@ -346,10 +355,10 @@ bool Player::hitWall(const Wall& wall)
 	}
 
 	newPos = glm::vec2(precHitbox.position.x, hb.position.y);
-	if (newPos.x + hb.radius > wallPos.x
-		&& newPos.y + hb.radius > wallPos.y
-		&& newPos.x - hb.radius < wallPos.x + wall.w
-		&& newPos.y - hb.radius < wallPos.y + wall.h) {
+	if (newPos.x + hb.width > wallPos.x
+		&& newPos.y + hb.height > wallPos.y
+		&& newPos.x < wallPos.x + wall.w
+		&& newPos.y < wallPos.y + wall.h) {
 
 		this->position = glm::vec2(this->position.x, precPosition.y);
 		this->hitbox.position = glm::vec2(this->hitbox.position.x, precHitbox.position.y);
@@ -363,18 +372,26 @@ void Player::hitLevelBorder(const glm::vec2 levelPos, const float levelWidth, co
 {
 	Hitbox hb = hitbox;
 
-	glm::vec2 newPos(hb.position.x, precHitbox.position.y);
-
-	if (hb.position.x - hb.radius < levelPos.x || hb.position.x + hb.radius > levelPos.x + levelWidth) {
+	if (hb.position.x < levelPos.x && hb.position.x < precHitbox.position.x) {
 		this->position = glm::vec2(precPosition.x, this->position.y);
 		this->hitbox.position = glm::vec2(precHitbox.position.x, this->hitbox.position.y);
 	}
+	else {
+		if (hb.position.x + hb.width > levelPos.x + levelWidth && hb.position.x > precHitbox.position.x) {
+			this->position = glm::vec2(precPosition.x, this->position.y);
+			this->hitbox.position = glm::vec2(precHitbox.position.x, this->hitbox.position.y);
+		}
+	}
 
-	newPos = glm::vec2(precHitbox.position.x, hb.position.y);
-
-	if (hb.position.y - hb.radius < levelPos.y || hb.position.y + hb.radius> levelPos.y + levelHeight) {
+	if (hb.position.y < levelPos.y && hb.position.y < precHitbox.position.y) {
 		this->position = glm::vec2(this->position.x, precPosition.y);
 		this->hitbox.position = glm::vec2(this->hitbox.position.x, precHitbox.position.y);
+	}
+	else {
+		if (hb.position.y + hb.height > levelPos.y + levelHeight && hb.position.y > precHitbox.position.y) {
+			this->position = glm::vec2(this->position.x, precPosition.y);
+			this->hitbox.position = glm::vec2(this->hitbox.position.x, precHitbox.position.y);
+		}
 	}
 }
 
@@ -396,13 +413,25 @@ Bullet Player::fire(glm::vec2 direction)
 		this->position.y + currentState.gunOffset.y, currentState.bulletRadius, modifiedDirection, this->weaponType, this->playerId);
 }
 
-void Player::draw()
+void Player::draw(int time)
 {
 	PlayerState currentState = playerState[this->state];
 
 	glm::vec2 screenPos = this->position + currentState.offset;
 
-	drawImage(this->texId[this->state], screenPos.x, screenPos.y, currentState.w, currentState.h, 1.0f);
+	//drawImage(this->texId[this->state], screenPos.x, screenPos.y, currentState.w, currentState.h, 1.0f);
+
+	if (this->isDead()) {
+		this->dead->draw(screenPos, 32.0 * currentState.zoom, 32.0 * currentState.zoom, time, this->left);
+		return;
+	}
+
+	if (this->speed.x == 0 && this->speed.y == 0) {
+		this->idle->draw(screenPos, 32.0 * currentState.zoom, 32.0 * currentState.zoom, time, this->left);
+	}
+	else {
+		this->walk->draw(screenPos, 32.0 * currentState.zoom, 32.0 * currentState.zoom, time, this->left);
+	}
 
 	hitbox.draw();
 }
@@ -412,6 +441,11 @@ void Player::toggleWeapon()
 	weaponType = weaponType == REGRESS ? EVOLVE : REGRESS;
 }
 
+bool Player::isDead()
+{
+	return this->state == 0 || this->state == 6;
+}
+
 // class Bullet
 Bullet::Bullet(float x, float y, float _radius, glm::vec2 _speed, BulletType _type, int _playerId)
 	: position(glm::vec2(x, y)), radius(_radius), speed(_speed), type(_type), playerId(_playerId)
@@ -419,7 +453,7 @@ Bullet::Bullet(float x, float y, float _radius, glm::vec2 _speed, BulletType _ty
 	stringstream ss;
 	ss << playerId << (type == 0 ? "/bulletregress.png" : "/bulletevolve.png");
 	this->texId = texturePool.getTexture(ss.str())->texId;
-	this->hitbox = Hitbox(position, radius, "bullet");
+	this->hitbox = Hitbox(position, radius, radius, "bullet");
 }
 
 bool Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4])
@@ -428,7 +462,7 @@ bool Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float l
 	position += 0.2f * speed * (float)deltaTime;
 
 	// Update hitbox position and size
-	hitbox.update(position, radius);
+	hitbox.update(position, radius, radius);
 
 	for (int i = 0; i < 4; i++) {
 		if (players[i] == nullptr) continue;
@@ -589,7 +623,7 @@ void Level::initTile(char c, int column, int line)
 	};
 }
 
-void Level::draw(Player* players[4])
+void Level::draw(Player* players[4], int time)
 {
 	// TODO : si on veut pouvoir gérer la perspective il faudra pouvoir dessiner les objets du plus loin au plus proche en incluant les personnages
 
@@ -604,7 +638,7 @@ void Level::draw(Player* players[4])
 	}
 
 	for (int i = 0; i < 4; i++) {
-		if (players[i] != nullptr) players[i]->draw();
+		if (players[i] != nullptr) players[i]->draw(time);
 	}
 
 	for (int i = 0; i < bullets.size(); ++i) {
@@ -653,7 +687,7 @@ void Level::update(int deltaTime, Player* players[4])
 }
 
 void Level::spawnBullet(Player* player, glm::vec2 direction) {
-	if (player->gunCooldown == 0) {
+	if (!player->isDead() && player->gunCooldown == 0) {
 		this->bullets.push_back(player->fire(direction));
 	}
 }
