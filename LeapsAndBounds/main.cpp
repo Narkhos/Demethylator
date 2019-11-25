@@ -20,10 +20,10 @@ using namespace std;
 
 SDL_Window* window;
 
-int width = 1024;
-int height = 768;
-int windowedWidth = 1024;
-int windowedHeight = 768;
+int width = 1280;
+int height = 720;
+int windowedWidth = 1280;
+int windowedHeight = 720;
 bool fullscreen = false;
 
 string gameTitle = "Leaps and Bounds";

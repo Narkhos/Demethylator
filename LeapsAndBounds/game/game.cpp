@@ -77,18 +77,18 @@ Wall::~Wall() {}
 
 void Wall::initTexCoord(int neighbourCode)
 {
-	float offset = neighbourCode / 15.0f;
+	float offset = neighbourCode / 16.0f;
 
-	texCoord[0] = neighbourCode / 15.0f;
+	texCoord[0] = neighbourCode / 16.0f;
 	texCoord[1] = 0.0;
 
-	texCoord[2] = (neighbourCode + 1.0f) / 15.0f;
+	texCoord[2] = (neighbourCode + 1.0f) / 16.0f;
 	texCoord[3] = 0.0;
 
-	texCoord[4] = (neighbourCode + 1.0f) / 15.0f;
+	texCoord[4] = (neighbourCode + 1.0f) / 16.0f;
 	texCoord[5] = 1.0;
 
-	texCoord[6] = neighbourCode / 15.0f;
+	texCoord[6] = neighbourCode / 16.0f;
 	texCoord[7] = 1.0;
 }
 
@@ -515,22 +515,22 @@ bool Bullet::hitWall(const Wall& wall)
 "...........";*/
 
 const string levelString =
-"................\n"
-".0...#........1.\n"
-"..........#.....\n"
-"..v.##.......^..\n"
-"....##........#.\n"
-".##.#v.......##.\n"
-"..............#.\n"
-"..^..........v..\n"
-".....#..........\n"
-".....#..........\n"
-".....#..........\n"
-".....#..........\n"
-".....#..........\n"
-".....#..........\n"
-".2...#........3.\n"
-"................";
+".............................................\n"
+".............................................\n"
+"....0.....#.............................1....\n"
+".............^...............................\n"
+"....##........#............#.................\n"
+"....##.......##...........###........####....\n"
+"....####......#............#...........#.....\n"
+"..^.####.....v...............................\n"
+".............................................\n"
+".............................................\n"
+".............................................\n"
+"....####........................v............\n"
+".............................................\n"
+"....2...................................3....\n"
+".............................................\n"
+".............................................";
 
 // class Level
 Level::Level(const string level, float x, float y, float _w, float _h)
@@ -541,8 +541,8 @@ Level::Level(const string level, float x, float y, float _w, float _h)
 	gridWidth = level.find('\n');
 	gridHeight = (level.size() + 1) / (gridWidth + 1);
 
-	tileHeight = w / (float)gridHeight;
-	tileWidth = h / (float)gridWidth;
+	tileHeight = h / (float)gridHeight;
+	tileWidth = w / (float)gridWidth;
 	cout << "Level dimentions: " << gridWidth << ", " << gridHeight << endl;
 
 	int line = 0;

@@ -11,8 +11,6 @@ ScreenGame::ScreenGame(Application* _app)
 		players[i] = nullptr;
 	}
 
-	background = app->texturePool->getTexture("background.png")->texId;
-
 	textColor = { 255 , 255 , 255, 255 };
 	txtGame = new GUI_TexteDynamique(L"Running", _app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
 }
@@ -25,7 +23,7 @@ void ScreenGame::initGame()
 		delete level;
 	}
 
-	level = new Level(levelString, 192, 64, 640, 640);
+	level = new Level(levelString, 0, 0, 1280, 720);
 
 	for (int i = 0; i < 4; i++) {
 		delete players[i];
@@ -196,7 +194,6 @@ void ScreenGame::draw()
 
 	// DISPLAY
 
-	drawImage(background, 0, 0, 1024, 768, 1.0f);
 	level->draw(players, app->currentTime);
 }
 

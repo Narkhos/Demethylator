@@ -16,8 +16,6 @@ public:
 	SDL_Color textColor;
 	GUI_TexteDynamique *txtGame;
 
-	GLuint background;
-
 	ScreenGame(Application* _app);
 	~ScreenGame();
 

@@ -6,7 +6,7 @@ BasicApp::BasicApp(SDL_Window* _window, int _width, int _height)
 		:Application(_window, _width, _height)
 {
     screenList.push_back(new ScreenMainMenu(this));
-    screenList.push_back(new ScreenPlayerSelect(this, 1, 4));
+    screenList.push_back(new ScreenPlayerSelect(this, 2, 4));
     screenList.push_back(new ScreenGame(this));
     screenList.push_back(new ScreenVictory(this));
     screenList.push_back(new ScreenStats(this));
