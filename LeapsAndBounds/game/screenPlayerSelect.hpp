@@ -3,6 +3,7 @@
 
 #include "application.hpp"
 #include "gui.hpp"
+#include "screenGame.hpp"
 
 class ScreenPlayerSelect : public Screen
 {

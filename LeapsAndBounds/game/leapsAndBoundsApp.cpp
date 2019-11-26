@@ -1,4 +1,4 @@
-#include "basicApp.hpp"
+#include "leapsAndBoundsApp.hpp"
 
 // class BasicApp : public Application
 
@@ -20,8 +20,7 @@ BasicApp::~BasicApp()
 ScreenMainMenu::ScreenMainMenu(Application* _app)
     :Screen(_app,"MainMenu")
 {
-    textColor = {255 , 255 , 255, 255};
-	txtMainMenu = new GUI_TexteDynamique(L"Main Menu", _app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
+    this->background = _app->texturePool->getTexture("mainmenu.png")->texId;
 }
 
 ScreenMainMenu::~ScreenMainMenu()
@@ -40,7 +39,7 @@ void ScreenMainMenu::event_KEYDOWN(SDL_Event& event)
 
 void ScreenMainMenu::draw()
 {
-    txtMainMenu->draw(10,50);
+	drawImage(this->background, 0, 0, 1280, 720, 1.0f);
 }
 
 void ScreenMainMenu::onSet(string id_orig) {}

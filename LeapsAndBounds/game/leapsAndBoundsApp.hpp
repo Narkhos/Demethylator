@@ -9,8 +9,7 @@ class ScreenMainMenu : public Screen
 {
     public:
 
-    SDL_Color textColor;
-	GUI_TexteDynamique *txtMainMenu;
+	GLuint background;
 
     ScreenMainMenu(Application* _app);
     ~ScreenMainMenu();

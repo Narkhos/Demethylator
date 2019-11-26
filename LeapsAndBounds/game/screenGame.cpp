@@ -11,6 +11,12 @@ ScreenGame::ScreenGame(Application* _app)
 		players[i] = nullptr;
 	}
 
+	for (int i = 0; i < 4; i++) {
+		stringstream ss;
+		ss << "win" << i << ".png";
+		this->victoryTexId[i] = _app->texturePool->getTexture(ss.str())->texId;
+	}
+
 	textColor = { 255 , 255 , 255, 255 };
 	txtGame = new GUI_TexteDynamique(L"Running", _app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
 }
@@ -19,6 +25,9 @@ ScreenGame::~ScreenGame() {}
 void ScreenGame::initGame()
 {
 	cout << "Init game" << endl;
+
+	this->winner = -1;
+
 	if (level != nullptr) {
 		delete level;
 	}
@@ -37,31 +46,29 @@ void ScreenGame::initGame()
 
 int ScreenGame::checkVictory()
 {
-	int winner = -1;
+	if (this->winner != -1) return this->winner;
+
 	for (int i = 0; i < 4; i++) {
 		if (players[i] != nullptr) {
-			
+
 			if (!players[i]->isDead()) {
-				if (winner != -1) {
-					winner = -1;
+				if (this->winner != -1) {
+					this->winner = -1;
 					break;
 				}
 				else {
-					winner = i;
+					this->winner = i;
 				}
 			}
 		}
 	}
 
-	return winner;
+	return this->winner;
 }
 
 void ScreenGame::update()
 {
-	if (this->checkVictory() >= 0) {
-		app->setScreen("Stats");
-		return;
-	}
+	if (this->winner != -1 || this->checkVictory() >= 0) return;
 
 	for (int i = 0; i < 4; i++) {
 		if (players[i] != nullptr) players[i]->update(app->deltaTime, level->position, level->w, level->h);
@@ -170,9 +177,11 @@ void ScreenGame::event_KEYDOWN(SDL_Event& event)
 
 void ScreenGame::event_MOUSEBUTTONDOWN(SDL_Event& event)
 {
-	if (event.button.button == SDL_BUTTON_LEFT)
-	{
-		app->setScreen("Stats");
+	if (this->winner != -1) {
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+			app->setScreen("MainMenu");
+		}
 	}
 }
 
@@ -185,6 +194,19 @@ void ScreenGame::event_CONTROLLERBUTTONDOWN(SDL_Event &event, int player)
 			players[player]->toggleWeapon();
 		}
 	}
+
+	if (this->winner != -1) {
+		if (event.cbutton.button == SDL_CONTROLLER_BUTTON_START) {
+			app->setScreen("MainMenu");
+		}
+	}
+}
+
+void ScreenGame::drawVictoryMessage()
+{
+	if (this->winner != -1) {
+		drawImage(this->victoryTexId[winner], 440, 260, 400, 200, 1.0f);
+	}
 }
 
 void ScreenGame::draw()
@@ -195,6 +217,7 @@ void ScreenGame::draw()
 	// DISPLAY
 
 	level->draw(players, app->currentTime);
+	this->drawVictoryMessage();
 }
 
 void ScreenGame::onSet(string id_orig)
