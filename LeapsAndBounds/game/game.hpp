@@ -167,7 +167,7 @@ public:
 
 	Bullet(float x, float y, float _radius, glm::vec2 _speed, BulletType _type, int _playerId);
 
-	bool update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4]);
+	int update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4]);
 
 	void draw();
 
@@ -216,6 +216,11 @@ public:
 	void draw(Player* players[4], int time);
 
 	glm::vec2 getPlayerSpawnScreenPosition(int playerIndex);
+
+
+	void setWallTexCoords();
+
+	void removeWalls(Player* player);
 
 	void update(int deltaTime, Player* players[4]);
 

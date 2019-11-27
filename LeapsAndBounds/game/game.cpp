@@ -456,7 +456,7 @@ Bullet::Bullet(float x, float y, float _radius, glm::vec2 _speed, BulletType _ty
 	this->hitbox = Hitbox(position, radius, radius, "bullet");
 }
 
-bool Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4])
+int Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4])
 {
 	// Update position
 	position += 0.2f * speed * (float)deltaTime;
@@ -469,16 +469,16 @@ bool Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float l
 		Hitbox playerHitbox = players[i]->getHitbox();
 		if (players[i]->playerId != this->playerId && hitbox.collision(playerHitbox)) {
 			players[i]->evolveOrRegress(type);
-			return false;
+			return i;
 		}
 	}
 	if (position.x < levelPos.x
 		|| position.x > levelPos.x + levelWidth
 		|| position.y < levelPos.y || position.y > levelPos.y + levelHeight) {
-		return false; // bullet to delete
+		return -1; // bullet to delete
 	}
 
-	return true;
+	return -2;
 }
 
 void Bullet::draw()
@@ -556,6 +556,11 @@ Level::Level(const string level, float x, float y, float _w, float _h)
 	}
 
 	// init wall texture coordinates
+	this->setWallTexCoords();
+}
+
+void Level::setWallTexCoords()
+{
 	for (int w = 0; w < walls.size(); ++w) {
 		int neighbourCode = 0;
 		for (int i = 0; i < walls.size(); ++i) {
@@ -651,6 +656,19 @@ glm::vec2 Level::getPlayerSpawnScreenPosition(int playerIndex)
 	return playerSpawns[playerIndex] * glm::vec2(tileWidth, tileHeight) + position;
 }
 
+void Level::removeWalls(Player* player)
+{
+	bool wallRemoved = false;
+	for (auto it = walls.begin(); it != walls.end(); it++) {
+		if (player->hitWall(*it)) {
+			walls.erase(it--);
+			wallRemoved = true;
+		}
+	}
+
+	if (wallRemoved) this->setWallTexCoords();
+}
+
 void Level::update(int deltaTime, Player* players[4])
 {
 	for (int p = 0; p < 4; p++) {
@@ -659,6 +677,7 @@ void Level::update(int deltaTime, Player* players[4])
 		for (int i = 0; i < mushrooms.size(); ++i) {
 			if (players[p]->takeMushroom(mushrooms[i])) {
 				mushrooms.erase(mushrooms.begin() + i);
+				removeWalls(players[p]);
 				break;
 			}
 		}
@@ -669,8 +688,12 @@ void Level::update(int deltaTime, Player* players[4])
 	}
 
 	for (int i = bullets.size() - 1; i >= 0; --i) {
-		if (bullets[i].update(deltaTime, position, w, h, players) == false) {
+		int playerId = bullets[i].update(deltaTime, position, w, h, players);
+		if (playerId >= -1) {
 			bullets.erase(bullets.begin() + i);
+			if (playerId >= 0) {
+				this->removeWalls(players[playerId]);
+			}
 		}
 	}
 
