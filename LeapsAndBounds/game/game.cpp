@@ -259,6 +259,7 @@ void Player::evolve()
 {
 	if (!this->isDead()) {
 		this->setState(min(this->state + 1, 6));
+		Mix_PlayChannel(-1, soundList["hurt"], 0);
 	}
 }
 
@@ -266,6 +267,7 @@ void Player::degenerate()
 {
 	if (!this->isDead()) {
 		this->setState(max(this->state - 1, 0));
+		Mix_PlayChannel(-1, soundList["hurt2"], 0);
 	}
 }
 
@@ -409,6 +411,8 @@ Bullet Player::fire(glm::vec2 direction)
 
 	this->gunCooldown = currentState.gunCooldown;
 
+	Mix_PlayChannel(-1, soundList["fire"], 0);
+
 	return Bullet(this->position.x + currentState.gunOffset.x,
 		this->position.y + currentState.gunOffset.y, currentState.bulletRadius, modifiedDirection, this->weaponType, this->playerId);
 }
@@ -515,22 +519,22 @@ bool Bullet::hitWall(const Wall& wall)
 "...........";*/
 
 const string levelString =
+".....................###.....................\n"
+"......................#......................\n"
+"....0...................................1....\n"
 ".............................................\n"
-".............................................\n"
-"....0.....#.............................1....\n"
-".............^...............................\n"
-"....##........#............#.................\n"
-"....##.......##...........###........####....\n"
-"....####......#............#...........#.....\n"
-"..^.####.....v...............................\n"
-".............................................\n"
-".............................................\n"
-".............................................\n"
-"....####........................v............\n"
+".....###.....##.##.........##.##.....###.....\n"
+"....####.....##..#####.#####..##.....####....\n"
+"....##...............###...............##....\n"
+"#..##........##...............##........##..#\n"
+"#..##........##...............##........##..#\n"
+"....##...............###...............##....\n"
+"....####.....##..#####.#####..##.....####....\n"
+".....###.....##.##.........##.##.....###.....\n"
 ".............................................\n"
 "....2...................................3....\n"
-".............................................\n"
-".............................................";
+"......................#......................\n"
+".....................###.....................";
 
 // class Level
 Level::Level(const string level, float x, float y, float _w, float _h)
@@ -659,9 +663,10 @@ glm::vec2 Level::getPlayerSpawnScreenPosition(int playerIndex)
 void Level::removeWalls(Player* player)
 {
 	bool wallRemoved = false;
-	for (auto it = walls.begin(); it != walls.end(); it++) {
-		if (player->hitWall(*it)) {
-			walls.erase(it--);
+
+	for (int i = walls.size() - 1; i >= 0; i--) {
+		if (player->hitWall(walls[i])) {
+			walls.erase(walls.begin() + i);
 			wallRemoved = true;
 		}
 	}
@@ -677,7 +682,7 @@ void Level::update(int deltaTime, Player* players[4])
 		for (int i = 0; i < mushrooms.size(); ++i) {
 			if (players[p]->takeMushroom(mushrooms[i])) {
 				mushrooms.erase(mushrooms.begin() + i);
-				removeWalls(players[p]);
+				removeWalls(players[p]); 
 				break;
 			}
 		}

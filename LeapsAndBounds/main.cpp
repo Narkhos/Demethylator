@@ -28,6 +28,8 @@ bool fullscreen = false;
 
 string gameTitle = "Leaps and Bounds";
 
+map<string, Mix_Chunk*> soundList;
+
 // MAIN
 int main(int argc, char* argv[])
 {
@@ -63,6 +65,17 @@ int main(int argc, char* argv[])
 		printf("Error initializing SDL_mixer: %s\n", Mix_GetError());
 		exit(1);
 	}
+
+
+	// preload sfx
+	soundList["fire"] = Mix_LoadWAV("./data/sfx/fire.wav");
+	soundList["fire2"] = Mix_LoadWAV("./data/sfx/fire2.wav");
+	soundList["hurt"] = Mix_LoadWAV("./data/sfx/hurt.wav");
+	soundList["hurt2"] = Mix_LoadWAV("./data/sfx/hurt2.wav");
+	soundList["pick"] = Mix_LoadWAV("./data/sfx/pick.wav");
+	soundList["select"] = Mix_LoadWAV("./data/sfx/select.wav");
+	/*soundList["death"] = Mix_LoadWAV("./data/sfx/death.wav");
+	soundList["win"] = Mix_LoadWAV("./data/sfx/win.wav");*/
 
 	int nbMappingsAdded = SDL_GameControllerAddMappingsFromFile("./data/gamecontrollerdb.txt");
 	if (nbMappingsAdded == -1)
@@ -117,6 +130,15 @@ int main(int argc, char* argv[])
 	glContext = nullptr;
 	SDL_DestroyWindow(window);
 	window = nullptr;
+
+	// Free sfx list
+	/*for (auto it = soundList.cbegin(); it != soundList.cend();)
+	{
+		Mix_FreeChunk(*it);
+		*it = nullptr;
+		it = m.erase(it);
+	}*/
+
 	Mix_CloseAudio();
 	SDL_Quit();
 

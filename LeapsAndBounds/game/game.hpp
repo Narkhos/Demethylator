@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include "gui.hpp"
 #include "basicAnimation2d.hpp"
+#include <SDL_mixer.h>
 
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32.lib")
@@ -19,6 +20,8 @@ using namespace std;
 
 extern bool showFPS;
 extern TexturePool texturePool;
+// sound list
+extern map<string, Mix_Chunk*> soundList;
 
 // GAME
 
@@ -114,6 +117,8 @@ public:
 	int playerId;
 
 	BasicAnimation2d* walk;
+	BasicAnimation2d* walkFront;
+	BasicAnimation2d* walkBack;
 	BasicAnimation2d* idle;
 	BasicAnimation2d* dead;
 	bool left;
