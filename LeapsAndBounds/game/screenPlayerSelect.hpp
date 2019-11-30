@@ -9,8 +9,9 @@ class ScreenPlayerSelect : public Screen
 {
 	public:
 
-    SDL_Color textColor;
-	GUI_TexteDynamique *txtGame;
+	SDL_Color textColor;
+	GUI_TexteDynamique *txtInfo;
+
 	int minPlayers;
     vector<Texture*> playerBg;
     Texture* pressStart;

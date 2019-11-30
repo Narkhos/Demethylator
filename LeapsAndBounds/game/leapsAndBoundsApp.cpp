@@ -21,6 +21,7 @@ ScreenMainMenu::ScreenMainMenu(Application* _app)
     :Screen(_app,"MainMenu")
 {
     this->background = _app->texturePool->getTexture("mainmenu.png")->texId;
+    this->pressAnyKey = _app->texturePool->getTexture("pressanykey.png")->texId;
 }
 
 ScreenMainMenu::~ScreenMainMenu()
@@ -40,6 +41,14 @@ void ScreenMainMenu::event_KEYDOWN(SDL_Event& event)
 void ScreenMainMenu::draw()
 {
 	drawImage(this->background, 0, 0, 1280, 720, 1.0f);
+
+	drawImage(this->pressAnyKey,
+		490.0,
+		570.0,
+		300.0,
+		40.0,
+		1.0 / 2.0*sin((float)(app->currentTime) / 400.0) + 1.0 / 2.0,
+		1.0);
 }
 
 void ScreenMainMenu::onSet(string id_orig) {}

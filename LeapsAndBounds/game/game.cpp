@@ -103,22 +103,22 @@ void Wall::draw()
 Mushroom::Mushroom(float x, float y, float _w, float _h, bool _bonus)
 	:position(x, y), w(_w), h(_h), bonus(_bonus ? 1 : -1)
 {
-	this->texId = texturePool.getTexture(_bonus ? "redmushroom.png" : "greenmushroom.png")->texId;
+	idle = new BasicAnimation2d(_bonus ? "redmushroom.png" : "greenmushroom.png", 300, texturePool);
 	this->hitbox = Hitbox(position + glm::vec2(0, h / 2), w, h / 2, "bonus");
 }
 
 Mushroom::Mushroom(glm::vec2 _position, float _w, float _h, bool _bonus)
 	:position(_position), w(_w), h(_h), bonus(_bonus ? 1 : -1)
 {
-	this->texId = texturePool.getTexture(_bonus ? "redmushroom.png" : "greenmushroom.png")->texId;
+	idle = new BasicAnimation2d(_bonus ? "redmushroom.png" : "greenmushroom.png", 300, texturePool);
 	this->hitbox = Hitbox(position + glm::vec2(0, h / 2), w, h / 2, "bonus");
 }
 
 Mushroom::~Mushroom() {}
 
-void Mushroom::draw()
+void Mushroom::draw(int time)
 {
-	drawImage(this->texId, position.x, position.y, this->w, this->h, 1.0f);
+	this->idle->draw(position, this->w, this->h, time);
 	hitbox.draw();
 }
 
@@ -136,30 +136,33 @@ PlayerState playerState[7] = {
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
+	// Tiny
 	{
 		glm::vec2(0, 0),	// offset
 		1.0f,				// zoom
 		glm::vec2(6, 4),	// hitboxOffset
 		16.0f,				// hitboxWidth
 		30.0f,				// hitboxHeight
-		1.00f,				// maxSpeed
+		1.40f,				// maxSpeed
 		glm::vec2(15, 15),	// gunOffset
-		8.0f,				// bulletRadius
-		1.0f,				// bulletSpeed
-		500					// gunCooldown
+		4.0f,				// bulletRadius
+		1.2f,				// bulletSpeed
+		400					// gunCooldown
 	},
+	// Small
 	{
 		glm::vec2(-15, -15),// offset
 		2.0f,				// zoom
 		glm::vec2(0, -11),	// hitboxOffset
 		32.0f,				// hitboxWidth
 		64.0f,				// hitboxHeight
-		1.00f,				// maxSpeed
+		1.20f,				// maxSpeed
 		glm::vec2(15, 15),	// gunOffset
 		8.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
-		500					// gunCooldown
+		400					// gunCooldown
 	},
+	// Normal
 	{
 		glm::vec2(-31, -31),	// offset
 		3.0f,				// zoom
@@ -172,29 +175,31 @@ PlayerState playerState[7] = {
 		1.0f,				// bulletSpeed
 		500					// gunCooldown
 	},
+	// Tall
 	{
 		glm::vec2(-47, -47),	// offset
 		4.0f,				// zoom
 		glm::vec2(-15, -47),	// hitboxOffset
 		64.0f,				// hitboxWidth
 		128.0f,				// hitboxHeight
-		1.00f,				// maxSpeed
+		1.20f,				// maxSpeed
 		glm::vec2(15, 15),	// gunOffset
-		8.0f,				// bulletRadius
+		16.0f,				// bulletRadius
 		1.0f,				// bulletSpeed
-		500					// gunCooldown
+		600					// gunCooldown
 	},
+	// Huge
 	{
 		glm::vec2(-63, -63),	// offset
 		5.0f,				// zoom
 		glm::vec2(-25, -63),	// hitboxOffset
 		80.0f,				// hitboxWidth
 		160.0f,				// hitboxHeight
-		1.00f,				// maxSpeed
+		0.80f,				// maxSpeed
 		glm::vec2(15, 15),	// gunOffset
-		8.0f,				// bulletRadius
-		1.0f,				// bulletSpeed
-		500					// gunCooldown
+		32.0f,				// bulletRadius
+		0.8f,				// bulletSpeed
+		800					// gunCooldown
 	},
 	// Dead
 	{
@@ -403,10 +408,10 @@ Bullet Player::fire(glm::vec2 direction)
 	glm::vec2 modifiedDirection;
 
 	if (direction.x == 0.0) {
-		modifiedDirection = glm::vec2(this->speed.x, direction.y * currentState.bulletSpeed);
+		modifiedDirection = glm::vec2(this->speed.x / 10.0, direction.y * currentState.bulletSpeed);
 	}
 	else {
-		modifiedDirection = glm::vec2(direction.x * currentState.bulletSpeed, this->speed.y);
+		modifiedDirection = glm::vec2(direction.x * currentState.bulletSpeed, this->speed.y / 10.0);
 	}
 
 	this->gunCooldown = currentState.gunCooldown;
@@ -520,20 +525,20 @@ bool Bullet::hitWall(const Wall& wall)
 
 const string levelString =
 ".....................###.....................\n"
-"......................#......................\n"
+".^....................#....................^.\n"
 "....0...................................1....\n"
 ".............................................\n"
-".....###.....##.##.........##.##.....###.....\n"
+".....###.....##..#....v....#..##.....###.....\n"
 "....####.....##..#####.#####..##.....####....\n"
 "....##...............###...............##....\n"
-"#..##........##...............##........##..#\n"
-"#..##........##...............##........##..#\n"
+"#..##........##.......v.......##........##..#\n"
+"#..##....^...##...............##...^....##..#\n"
 "....##...............###...............##....\n"
 "....####.....##..#####.#####..##.....####....\n"
-".....###.....##.##.........##.##.....###.....\n"
+".....###.....##..#....v....#..##.....###.....\n"
 ".............................................\n"
 "....2...................................3....\n"
-"......................#......................\n"
+".^....................#....................^.\n"
 ".....................###.....................";
 
 // class Level
@@ -639,7 +644,7 @@ void Level::draw(Player* players[4], int time)
 	drawImage(floor, position.x, position.y, w, h, 1.0f);
 
 	for (int i = 0; i < mushrooms.size(); ++i) {
-		mushrooms[i].draw();
+		mushrooms[i].draw(time);
 	}
 
 	for (int i = 0; i < walls.size(); ++i) {

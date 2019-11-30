@@ -71,7 +71,7 @@ public:
 class Mushroom {
 public:
 	int bonus;
-	GLuint texId;
+	BasicAnimation2d* idle;
 	glm::vec2 position;
 	float w;
 	float h;
@@ -83,7 +83,7 @@ public:
 
 	~Mushroom();
 
-	void draw();
+	void draw(int time);
 };
 
 enum BulletType { REGRESS = 0, EVOLVE = 1 };

@@ -10,6 +10,7 @@ class ScreenMainMenu : public Screen
     public:
 
 	GLuint background;
+	GLuint pressAnyKey;
 
     ScreenMainMenu(Application* _app);
     ~ScreenMainMenu();

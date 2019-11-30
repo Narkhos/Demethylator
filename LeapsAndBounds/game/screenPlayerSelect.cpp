@@ -5,8 +5,8 @@
 ScreenPlayerSelect::ScreenPlayerSelect(Application* app, int _minPlayers, int _maxPlayers)
     :Screen(app,"PlayerSelect"), minPlayers(_minPlayers)
 {
-    textColor = {255 , 255 , 255, 255};
-	txtGame = new GUI_TexteDynamique(L"Player Selection", app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
+	textColor = { 255 , 255 , 255, 255 };
+	txtInfo = new GUI_TexteDynamique(L"No single player yet. Keyboard player: hit spacebar to join. Controller players: hit start to join. Then click the 'GO' button.", app->fontPool->getFont("OxygenMono-Regular.ttf"), textColor);
 
 	// Chargement des images de fond correspondant aux différents joueurs
 	for(int i = 0; i<_maxPlayers; i++)
@@ -19,7 +19,7 @@ ScreenPlayerSelect::ScreenPlayerSelect(Application* app, int _minPlayers, int _m
     pressStart = this->app->texturePool->getTexture("playerSelect/pressStart.png");
     ready = this->app->texturePool->getTexture("playerSelect/ready.png");
     go = new GUI_Button(this->app->texturePool->getTexture("playerSelect/go.png")->getId(),
-        app->width/2 - 50, app->height-80, 100,40, 2);
+        app->width/2 - 50, app->height-56, 100,40, 3);
 }
 ScreenPlayerSelect::~ScreenPlayerSelect() {}
 
@@ -28,7 +28,7 @@ void ScreenPlayerSelect::update()
     // Bouton Go
     if(app->controllerPool.countPlayersWithController()>= this->minPlayers)
     {
-        go->etat=1;
+        go->etat=(go->isIn(app->mouse_x, app->mouse_y)) ? 2 : 1;
         go->actif=true;
     }
     else
@@ -94,18 +94,17 @@ void ScreenPlayerSelect::onQuit(string id_dest)
 
 void ScreenPlayerSelect::draw()
 {
-    // Afficher le jeu
-    txtGame->draw(10,50);
+	float yPosPlayer = 72.0f;
 
     for(int i = 0; i < playerBg.size();i++)
     {
-        drawImage(playerBg[i]->getId(),i*(app->width/playerBg.size()),0,app->width/playerBg.size(), 4.0/5.0*app->height,1.0,1.0);
+        drawImage(playerBg[i]->getId(),i*(app->width/playerBg.size()),yPosPlayer,app->width/playerBg.size(), 4.0/5.0*app->height,1.0,1.0);
 
         if(i >= app->controllerPool.playerControllers.size() || app->controllerPool.playerControllers[i]==-1)
         {
             drawImage(pressStart->getId(),
                 (1.0/12.0+i)*(app->width/playerBg.size()),
-                6.0/10.0 * app->height,
+                6.0/10.0 * app->height + yPosPlayer,
                 10.0/12.0*app->width/playerBg.size(),
                 1.0/12.0*app->height,
                 1.0/2.0*sin((float)(app->currentTime)/200.0)+1.0/2.0,
@@ -116,13 +115,15 @@ void ScreenPlayerSelect::draw()
             // Le joueur est pret (TODO voir comment on gère les éventuels paramètres, notamment le choix du personnage s'il y a lieu)
             drawImage(ready->getId(),
                 (1.0/12.0+i)*(app->width/playerBg.size()),
-                6.0/10.0 * app->height,
+                6.0/10.0 * app->height + yPosPlayer,
                 10.0/12.0*app->width/playerBg.size(),
                 1.0/12.0*app->height,
                 1.0,
                 1.0);
         }
     }
+
+	txtInfo->draw(5, 50);
 
     go->draw();
 }
