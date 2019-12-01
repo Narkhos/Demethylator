@@ -1,5 +1,34 @@
 # Demethylator - Epigenesis
 
+This game is my entry for Game Off 2019 game jam.
+
+Page on itch.io: https://narkhos.itch.io/demethylator
+Project on github: https://github.com/Narkhos/Demethylator
+
+## Game rules
+
+There is 5 levels of evolution. Each player begin with level 3. If you reach level 0, you die, if you reach level 6 you die.
+
+Hence, there are two ways to kill your opponents:
+- over-regress them with weapon 1
+- over-evolve them with weapon 2
+
+## How to play
+
+The game can be played by 2 to 4 players (one player can play on keyboard if you lake of game controllers).
+
+### Keyboard controls
+
+- Use WASD keys to move
+- SPACE to switch weapon
+- Arrow keys to fire in desired direction
+
+### gamepad controls
+
+- Use D-pad to move
+- RB to switch weapon
+- A, B, X, Y to fire in desired direction
+
 ## MIT License
 
 Copyright 2019 Xavier Direz

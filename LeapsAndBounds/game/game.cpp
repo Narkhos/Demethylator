@@ -203,17 +203,17 @@ PlayerState playerState[7] = {
 	},
 	// Dead
 	{
-		glm::vec2(0, 0),	// offset
-		1.0f,				// zoom
-		glm::vec2(6, 4),	// hitboxOffset
-		16.0f,				// hitboxWidth
-		30.0f,				// hitboxHeight
-		1.00f,				// maxSpeed
+		glm::vec2(-63, -63),	// offset
+		5.0f,				// zoom
+		glm::vec2(-25, -63),	// hitboxOffset
+		80.0f,				// hitboxWidth
+		160.0f,				// hitboxHeight
+		0.80f,				// maxSpeed
 		glm::vec2(15, 15),	// gunOffset
-		8.0f,				// bulletRadius
-		1.0f,				// bulletSpeed
-		500					// gunCooldown
-	}
+		32.0f,				// bulletRadius
+		0.8f,				// bulletSpeed
+		800					// gunCooldown
+	},
 };
 
 // class Player
@@ -462,7 +462,7 @@ Bullet::Bullet(float x, float y, float _radius, glm::vec2 _speed, BulletType _ty
 	stringstream ss;
 	ss << playerId << (type == 0 ? "/bulletregress.png" : "/bulletevolve.png");
 	this->texId = texturePool.getTexture(ss.str())->texId;
-	this->hitbox = Hitbox(position, radius, radius, "bullet");
+	this->hitbox = Hitbox(position - glm::vec2(radius * 2.0f / 3.0f), radius * 1.5f, radius * 1.5f, "bullet");
 }
 
 int Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float levelHeight, Player* players[4])
@@ -471,7 +471,7 @@ int Bullet::update(int deltaTime, glm::vec2 levelPos, float levelWidth, float le
 	position += 0.2f * speed * (float)deltaTime;
 
 	// Update hitbox position and size
-	hitbox.update(position, radius, radius);
+	hitbox.update(position - glm::vec2(radius * 2.0f / 3.0f), radius * 1.5f, radius * 1.5f);
 
 	for (int i = 0; i < 4; i++) {
 		if (players[i] == nullptr) continue;

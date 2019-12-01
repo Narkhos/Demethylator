@@ -48,6 +48,7 @@ void ScreenPlayerSelect::event_KEYDOWN(SDL_Event& event)
 	if (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_RETURN) {
 		int player = app->controllerPool.associateKeyboardToPlayer();
 		cout << "Player " << player << " will play on keyboard" << endl;
+		Mix_PlayChannel(-1, soundList["select"], 0);
 	}
 }
 
@@ -71,6 +72,7 @@ void ScreenPlayerSelect::event_CONTROLLERBUTTONDOWN(SDL_Event &event, int player
         for(int i = 0; i < this->app->controllerPool.playerControllers.size(); i++)
         {
             cout << "Player " << i << " : " << this->app->controllerPool.playerControllers[i] << endl << endl;
+			Mix_PlayChannel(-1, soundList["select"], 0);
         }
     }
 }

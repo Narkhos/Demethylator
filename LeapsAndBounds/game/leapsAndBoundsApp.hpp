@@ -19,6 +19,8 @@ class ScreenMainMenu : public Screen
     void draw();
 
     virtual void event_KEYDOWN(SDL_Event& event);
+	virtual void event_MOUSEBUTTONDOWN(SDL_Event& event);
+	virtual void event_CONTROLLERBUTTONDOWN(SDL_Event &event, int player);
     virtual void onSet(string id_orig);
     virtual void onQuit(string id_dest);
 };

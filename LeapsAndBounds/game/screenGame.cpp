@@ -153,12 +153,15 @@ void ScreenGame::update()
 				level->spawnBullet(players[i], glm::vec2(1.0, 0.0));
 			}
 		}
-
 	}
 }
 
 void ScreenGame::event_KEYDOWN(SDL_Event& event)
 {
+	if (winner != -1 && (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_RETURN)) {
+		app->setScreen("Game");
+	}
+
 	if (event.key.keysym.sym == SDLK_ESCAPE) {
 		app->setScreen("MainMenu");
 		return;
@@ -197,7 +200,7 @@ void ScreenGame::event_CONTROLLERBUTTONDOWN(SDL_Event &event, int player)
 
 	if (this->winner != -1) {
 		if (event.cbutton.button == SDL_CONTROLLER_BUTTON_START) {
-			app->setScreen("MainMenu");
+			app->setScreen("Game");
 		}
 	}
 }

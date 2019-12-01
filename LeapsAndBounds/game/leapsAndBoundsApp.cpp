@@ -38,6 +38,19 @@ void ScreenMainMenu::event_KEYDOWN(SDL_Event& event)
     app->setScreen("PlayerSelect");
 }
 
+void ScreenMainMenu::event_MOUSEBUTTONDOWN(SDL_Event& event)
+{
+	if (event.button.button == SDL_BUTTON_LEFT)
+	{
+		app->setScreen("PlayerSelect");
+	}
+}
+
+void ScreenMainMenu::event_CONTROLLERBUTTONDOWN(SDL_Event &event, int player)
+{
+	app->setScreen("PlayerSelect");
+}
+
 void ScreenMainMenu::draw()
 {
 	drawImage(this->background, 0, 0, 1280, 720, 1.0f);
